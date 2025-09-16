@@ -86,6 +86,7 @@
 #include <Wire.h>
 #include "Classes.h"
 #include "LittleFS.h"
+#include <PubSubClient.h>
 /* .------------------------------------------------------------------------------------. */
 /* |  ___           __ _                    _    _       ___     _   _   _              | */
 /* | / __|___ _ _  / _(_)__ _ _  _ _ _ __ _| |__| |___  / __|___| |_| |_(_)_ _  __ _ ___| */
@@ -122,6 +123,19 @@ const char* clockFormat = "H:i"; //Examples: H:i -> 21:19, h:ia -> 09:19PM
 
 //How long to show a message for when a scheduled message is shown for
 const int scheduledMessageDisplayTimeMillis = 7500;
+
+// MQTT settings: set your broker and topic here
+// Examples:
+//   const char* mqttBroker = "192.168.1.10";
+//   const int   mqttPort   = 1883;
+//   const char* mqttUsername = ""; // leave blank if not required
+//   const char* mqttPassword = ""; // leave blank if not required
+//   const char* mqttTopic    = "splitflap/text";
+const char* mqttBroker = "";        // REQUIRED: set your broker hostname/IP
+const int   mqttPort   = 1883;       // default MQTT port
+const char* mqttUsername = "";      // optional
+const char* mqttPassword = "";      // optional
+const char* mqttTopic    = "";
 
 #if WIFI_STATIC_IP == true
 //Static IP address for your device. Try take care to not conflict with something else on your network otherwise
@@ -604,6 +618,9 @@ void setup() {
     delay(250);
     webServer.begin();
 
+    // Setup MQTT (will only connect if WiFi configured and broker set)
+    mqttSetup();
+
     SerialPrintln("Split Flap Ready!");
     SerialPrintln("#######################################################");
   }
@@ -690,6 +707,9 @@ void loop() {
 
   //ezTime library sync
   events(); 
+
+  // MQTT client loop
+  mqttLoop();
   
   //Process every second
   unsigned long currentMillis = millis();
