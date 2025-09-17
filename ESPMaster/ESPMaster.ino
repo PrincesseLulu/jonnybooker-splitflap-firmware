@@ -87,6 +87,9 @@
 #include "Classes.h"
 #include "LittleFS.h"
 #include <PubSubClient.h>
+/* Forward declarations for text display functions */
+void showText(String message);
+void showText(String message, int delayMillis);
 /* .------------------------------------------------------------------------------------. */
 /* |  ___           __ _                    _    _       ___     _   _   _              | */
 /* | / __|___ _ _  / _(_)__ _ _  _ _ _ __ _| |__| |___  / __|___| |_| |_(_)_ _  __ _ ___| */
